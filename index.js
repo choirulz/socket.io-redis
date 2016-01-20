@@ -75,6 +75,14 @@ function adapter(uri, opts){
     });
     sub.on('message', this.onmessage.bind(this));
   }
+  
+  function trycatch (func, arg, cb) {
+    try {
+      return func(arg);
+    } catch (err) {
+      return cb;
+    }
+  }
 
   /**
    * Inherits from `Adapter`.
@@ -89,8 +97,12 @@ function adapter(uri, opts){
    */
 
   Redis.prototype.onmessage = function(channel, msg){
-    var args = JSON.parse(msg);
+    //var args = JSON.parse(msg);
+    var args =  (typeof msg === 'string') ? trycatch(JSON.parse, msg, []) : msg;
+   
     var packet;
+    
+     
 
     //if (uid == args.shift()) return debug('ignore same uid');
 
